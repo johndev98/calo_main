@@ -69,7 +69,7 @@ UserProfile _userProfileDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = UserProfile();
-  object.age = reader.readLong(offsets[0]);
+  object.age = reader.readLongOrNull(offsets[0]);
   object.gender =
       _UserProfilegenderValueEnumMap[reader.readByteOrNull(offsets[1])] ??
           Gender.male;
@@ -85,7 +85,7 @@ P _userProfileDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLong(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 1:
       return (_UserProfilegenderValueEnumMap[reader.readByteOrNull(offset)] ??
           Gender.male) as P;
@@ -97,12 +97,14 @@ P _userProfileDeserializeProp<P>(
 const _UserProfilegenderEnumValueMap = {
   'male': 0,
   'female': 1,
-  'none': 2,
+  'other': 2,
+  'none': 3,
 };
 const _UserProfilegenderValueEnumMap = {
   0: Gender.male,
   1: Gender.female,
-  2: Gender.none,
+  2: Gender.other,
+  3: Gender.none,
 };
 
 Id _userProfileGetId(UserProfile object) {
@@ -198,8 +200,24 @@ extension UserProfileQueryWhere
 
 extension UserProfileQueryFilter
     on QueryBuilder<UserProfile, UserProfile, QFilterCondition> {
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> ageIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'age',
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> ageIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'age',
+      ));
+    });
+  }
+
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> ageEqualTo(
-      int value) {
+      int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'age',
@@ -209,7 +227,7 @@ extension UserProfileQueryFilter
   }
 
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> ageGreaterThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -222,7 +240,7 @@ extension UserProfileQueryFilter
   }
 
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> ageLessThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -235,8 +253,8 @@ extension UserProfileQueryFilter
   }
 
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> ageBetween(
-    int lower,
-    int upper, {
+    int? lower,
+    int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -454,7 +472,7 @@ extension UserProfileQueryProperty
     });
   }
 
-  QueryBuilder<UserProfile, int, QQueryOperations> ageProperty() {
+  QueryBuilder<UserProfile, int?, QQueryOperations> ageProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'age');
     });

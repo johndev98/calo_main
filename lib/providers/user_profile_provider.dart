@@ -16,7 +16,7 @@ class UserProfileNotifier extends Notifier<UserProfile> {
       final newProfile = UserProfile()
         ..id = 1
         ..gender = Gender.none
-        ..age = 0;
+        ..age = 18;
       isar.writeTxnSync(() => isar.userProfiles.putSync(newProfile));
       return newProfile;
     }

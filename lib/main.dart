@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'models/user_profile.dart';
@@ -46,79 +45,81 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('User Profile')),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              ref.read(userProfileProvider.notifier).resetProfile();
-            },
-            child: const Text("Reset Profile"),
-          ),
-          const SizedBox(height: 20),
-          Text('Gender: ${profile.gender.name}'),
-          Text('Age: ${profile.age}'),
-          const SizedBox(height: 20),
-
-          // chọn Male
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  profile.gender == Gender.male ? Colors.blue : Colors.grey,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                ref.read(userProfileProvider.notifier).resetProfile();
+              },
+              child: const Text("Reset Profile"),
             ),
-            onPressed: () {
-              ref.read(userProfileProvider.notifier).setGender(Gender.male);
-            },
-            child: const Text('Male'),
-          ),
-
-          const SizedBox(height: 10),
-
-          // chọn Female
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  profile.gender == Gender.female ? Colors.pink : Colors.grey,
+            const SizedBox(height: 20),
+            Text('Gender: ${profile.gender.name}'),
+            Text('Age: ${profile.age}'),
+            const SizedBox(height: 20),
+        
+            // chọn Male
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor:
+                    profile.gender == Gender.male ? Colors.blue : Colors.grey,
+              ),
+              onPressed: () {
+                ref.read(userProfileProvider.notifier).setGender(Gender.male);
+              },
+              child: const Text('Male'),
             ),
-            onPressed: () {
-              ref.read(userProfileProvider.notifier).setGender(Gender.female);
-            },
-            child: const Text('Female'),
-          ),
-
-          const SizedBox(height: 20),
-
-          // Nút Next
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: profile.gender == Gender.none
-                  ? Colors.grey
-                  : Colors.deepOrange,
+        
+            const SizedBox(height: 10),
+        
+            // chọn Female
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor:
+                    profile.gender == Gender.female ? Colors.pink : Colors.grey,
+              ),
+              onPressed: () {
+                ref.read(userProfileProvider.notifier).setGender(Gender.female);
+              },
+              child: const Text('Female'),
             ),
-            onPressed: () {
-              if (profile.gender == Gender.none) {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text("Thông báo"),
-                    content: const Text(
-                        "Vui lòng chọn giới tính trước khi tiếp tục."),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text("OK"),
-                      ),
-                    ],
-                  ),
-                );
-              } else {
-                debugPrint(
-                    "Tiếp tục với gender: ${profile.gender.name}, age: ${profile.age}");
-              }
-            },
-            child: const Text("Next"),
-          ),
-        ],
+        
+            const SizedBox(height: 20),
+        
+            // Nút Next
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: profile.gender == Gender.none
+                    ? Colors.grey
+                    : Colors.deepOrange,
+              ),
+              onPressed: () {
+                if (profile.gender == Gender.none) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text("Thông báo"),
+                      content: const Text(
+                          "Vui lòng chọn giới tính trước khi tiếp tục."),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text("OK"),
+                        ),
+                      ],
+                    ),
+                  );
+                } else {
+                  debugPrint(
+                      "Tiếp tục với gender: ${profile.gender.name}, age: ${profile.age}");
+                }
+              },
+              child: const Text("Next"),
+            ),
+          ],
+        ),
       ),
     );
   }
