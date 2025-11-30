@@ -16,6 +16,7 @@ dependencies:
   flutter_riverpod: ^2.6.1
   flutter_unit_ruler: ^1.0.1
   http: ^1.6.0
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:
@@ -43,3 +44,16 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+  fonts:
+    - family: Open Sans
+      fonts:
+        - asset: assets/fonts/OpenSans-Medium.ttf
+        - asset: assets/fonts/OpenSans-Bold.ttf
+          weight: 500
+
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/Nunito-Medium.ttf
+        - asset: assets/fonts/Nunito-Bold.ttf
+          weight: 500
+
