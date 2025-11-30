@@ -9,12 +9,37 @@ Future<void> main() async {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends ConsumerWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isarAsync = ref.watch(isarFutureProvider);
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Theo dõi app lifecycle
+    if (state == AppLifecycleState.detached) {
+      print('📱 App bị detached - Database sẽ tự động đóng qua provider');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isarAsync = ref.watch(isarProvider);
 
     return MaterialApp(
       home: isarAsync.when(

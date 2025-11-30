@@ -1,3 +1,4 @@
+// user_profile_provider.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import '../models/user_profile.dart';
@@ -6,9 +7,8 @@ import 'isar_provider.dart';
 class UserProfileNotifier extends Notifier<UserProfile> {
   @override
   UserProfile build() {
-    final isar = ref.watch(isarProvider);
+    final isar = ref.watch(isarSyncProvider); // Sử dụng sync provider
 
-    // Lấy profile nếu có, nếu chưa thì tạo mới với gender = none
     final profile = isar.userProfiles.where().findFirstSync();
     if (profile != null) {
       return profile;
@@ -22,8 +22,9 @@ class UserProfileNotifier extends Notifier<UserProfile> {
     }
   }
 
+  // Các method khác giữ nguyên...
   Future<void> setGender(Gender gender) async {
-    final isar = ref.read(isarProvider);
+    final isar = ref.read(isarSyncProvider); // Sử dụng sync provider
 
     final updated = UserProfile()
       ..id = state.id
@@ -34,11 +35,11 @@ class UserProfileNotifier extends Notifier<UserProfile> {
       await isar.userProfiles.put(updated);
     });
 
-    state = updated; // gán object mới → UI rebuild ngay
+    state = updated;
   }
 
   Future<void> setAge(int age) async {
-    final isar = ref.read(isarProvider);
+    final isar = ref.read(isarSyncProvider); // Sử dụng sync provider
 
     final updated = UserProfile()
       ..id = state.id
@@ -52,9 +53,8 @@ class UserProfileNotifier extends Notifier<UserProfile> {
     state = updated;
   }
 
-  /// Reset toàn bộ dữ liệu về mặc định
   Future<void> resetProfile() async {
-    final isar = ref.read(isarProvider);
+    final isar = ref.read(isarSyncProvider); // Sử dụng sync provider
 
     final reset = UserProfile()
       ..id = 1
@@ -65,10 +65,10 @@ class UserProfileNotifier extends Notifier<UserProfile> {
       await isar.userProfiles.put(reset);
     });
 
-    state = reset; // cập nhật lại state để UI rebuild ngay
+    state = reset;
   }
 }
 
 final userProfileProvider = NotifierProvider<UserProfileNotifier, UserProfile>(
-  () => UserProfileNotifier()
+  () => UserProfileNotifier(),
 );
