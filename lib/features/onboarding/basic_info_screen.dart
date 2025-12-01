@@ -1,39 +1,32 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class BasicInfoScreen extends StatefulWidget {
+import '../../models/user_profile.dart';
+import '../../providers/user_profile_provider.dart';
+
+class BasicInfoScreen extends ConsumerWidget {
   const BasicInfoScreen({super.key});
 
-  @override
-  State<BasicInfoScreen> createState() => _BasicInfoScreenState();
-}
-
-class _BasicInfoScreenState extends State<BasicInfoScreen> {
-  String gender = "male";
-
-  int? birthYear;
-  int? height;
-  int? weight;
-
-  // mở bottom sheet picker
-  void _openPicker({
+  void _openPickerGeneric({
+    required BuildContext context,
     required List<int> items,
-    required int initial,
+    int? currentValue,
     required ValueChanged<int> onSelected,
-    String? unit, // thêm đơn vị
+    String? unit,
   }) {
+    // nếu currentValue null thì lấy giá trị mặc định là items đầu tiên
+    int selectedValue = currentValue ?? items.first;
+
     showCupertinoModalPopup(
       context: context,
       builder: (_) => Container(
-        constraints: const BoxConstraints(maxWidth: 400),
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-          color: CupertinoColors.systemBackground,
-        ),
+        constraints: BoxConstraints(maxWidth: 400),
         height: 300,
+        decoration: const BoxDecoration(
+          color: CupertinoColors.systemBackground,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
         child: Column(
           children: [
             Expanded(
@@ -43,25 +36,27 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                   CupertinoPicker(
                     itemExtent: 40,
                     scrollController: FixedExtentScrollController(
-                      initialItem: items.indexOf(initial),
+                      initialItem: items.indexOf(selectedValue),
                     ),
-                    onSelectedItemChanged: (index) => onSelected(items[index]),
-                    children: items.map((e) {
-                      return Center(
-                        child: Text("$e", style: const TextStyle(fontSize: 30)),
-                      );
-                    }).toList(),
+                    onSelectedItemChanged: (i) => selectedValue = items[i],
+                    children: items
+                        .map(
+                          (e) => Center(
+                            child: Text(
+                              "$e",
+                              style: const TextStyle(fontSize: 30),
+                            ),
+                          ),
+                        )
+                        .toList(),
                   ),
-
-                  // Đơn vị đứng yên ở giữa
                   if (unit != null)
                     Positioned(
-                      right: 70, // chỉnh để đơn vị nằm đúng vị trí
+                      right: 70,
                       child: Text(
                         unit,
                         style: const TextStyle(
                           fontSize: 26,
-                          color: CupertinoColors.black,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -69,30 +64,26 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                 ],
               ),
             ),
-
-            // nút Xong
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: GestureDetector(
-                  onTap: () => Navigator.of(context).pop(),
-                  child: Container(
-                    constraints: const BoxConstraints(maxWidth: 400),
-                    width: double.infinity,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFF9114),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        "Xong",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+            GestureDetector(
+              onTap: () {
+                onSelected(selectedValue); // luôn chọn giá trị hiện tại
+                Navigator.pop(context);
+              },
+              child: Container(
+                width: double.infinity,
+                height: 50,
+                margin: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF9114),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: const Center(
+                  child: Text(
+                    "Xong",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -104,8 +95,57 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
     );
   }
 
+  void _onNextPressed(BuildContext context, UserProfile profile) {
+    // Danh sách các trường chưa chọn
+    List<String> missing = [];
+
+    if (profile.gender.name == "none") missing.add("giới tính");
+    if (profile.birthYear == null) missing.add("năm sinh");
+    if (profile.weight == null) missing.add("cân nặng");
+    if (profile.height == null) missing.add("chiều cao");
+
+    if (missing.isNotEmpty) {
+      // Hiển thị dialog với các mục chưa chọn
+      showCupertinoDialog(
+        context: context,
+        builder: (_) => CupertinoAlertDialog(
+          title: const Text("Thiếu thông tin"),
+          content: Text("Bạn chưa chọn ${missing.join(', ')}"),
+          actions: [
+            CupertinoDialogAction(
+              child: const Text("OK"),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        ),
+      );
+    } else {
+      // Tất cả đã chọn -> chuyển sang màn hình tiếp theo
+      Navigator.push(
+        context,
+        CupertinoPageRoute(
+          builder: (_) => const Scaffold(
+            body: Center(child: Text('data')),
+          ), // Thay bằng màn hình tiếp theo của bạn
+        ),
+      );
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profile = ref.watch(userProfileProvider);
+    final notifier = ref.read(userProfileProvider.notifier);
+    final currentYear = DateTime.now().year;
+    final birthYears = List.generate(101, (i) => currentYear - i); // 100 năm
+    final weights = List.generate(281, (i) => 20 + i); // 20..300
+    final heights = List.generate(121, (i) => 100 + i); // 100..220
+    // Kiểm tra tất cả giá trị
+    final isComplete =
+        profile.gender.name != "none" &&
+        profile.birthYear != null &&
+        profile.weight != null &&
+        profile.height != null;
     return Scaffold(
       backgroundColor: const Color(0xFFF7F4E9),
       body: SafeArea(
@@ -113,22 +153,24 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 10),
 
-              // Back + Progress
+              // Progress + Back
               Container(
-                constraints: const BoxConstraints(maxWidth: 400),
+                constraints: BoxConstraints(maxWidth: 400),
                 child: Row(
-                  spacing: 15,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Icon(Icons.arrow_back_ios_new, size: 18),
+                    GestureDetector(
+                      child: Icon(Icons.arrow_back_ios_new, size: 18),
+                      onTap: () {
+                        notifier.reset();
+                      },
+                    ),
                     Expanded(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: const LinearProgressIndicator(
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 15),
+                        child: LinearProgressIndicator(
                           value: 0.25,
                           backgroundColor: Colors.white,
                           valueColor: AlwaysStoppedAnimation(Color(0xFFFFA726)),
@@ -144,26 +186,31 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // Giới tính
+                    // Gender
                     GenderSelector(
                       maxWidth: 400,
-                      value: gender,
-                      onChanged: (v) => setState(() => gender = v),
+                      value: profile.gender.name,
+                      onChanged: (v) {
+                        notifier.update(
+                          gender: v == "male" ? Gender.male : Gender.female,
+                        );
+                      },
                     ),
 
                     // Năm sinh
                     SelectField(
                       maxWidth: 400,
                       label: "Năm sinh",
-                      value: birthYear,
-                      items: List.generate(60, (i) => 1965 + i),
-                      defaultInitial: 1995,
-                      onChanged: (v) => setState(() => birthYear = v),
+                      value: profile.birthYear,
+                      items: birthYears,
+                      defaultInitial: 2000,
+                      onChanged: (v) => notifier.update(birthYear: v),
                       openPicker: () {
-                        _openPicker(
-                          items: List.generate(60, (i) => 1965 + i),
-                          initial: birthYear ?? 1995,
-                          onSelected: (v) => setState(() => birthYear = v),
+                        _openPickerGeneric(
+                          context: context,
+                          items: birthYears,
+                          currentValue: profile.birthYear ?? 2000,
+                          onSelected: (v) => notifier.update(birthYear: v),
                         );
                       },
                     ),
@@ -172,17 +219,18 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                     SelectField(
                       maxWidth: 400,
                       label: "Cân nặng",
-                      value: weight,
+                      value: profile.weight,
                       unit: "kg",
-                      items: List.generate(120, (i) => 20 + i),
+                      items: weights,
                       defaultInitial: 60,
-                      onChanged: (v) => setState(() => weight = v),
+                      onChanged: (v) => notifier.update(weight: v),
                       openPicker: () {
-                        _openPicker(
-                          items: List.generate(120, (i) => 20 + i),
-                          initial: weight ?? 60,
+                        _openPickerGeneric(
+                          context: context,
+                          items: weights,
+                          currentValue: profile.weight ?? 60,
                           unit: "kg",
-                          onSelected: (v) => setState(() => weight = v),
+                          onSelected: (v) => notifier.update(weight: v),
                         );
                       },
                     ),
@@ -191,17 +239,18 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                     SelectField(
                       maxWidth: 400,
                       label: "Chiều cao",
-                      value: height,
+                      value: profile.height,
                       unit: "cm",
-                      items: List.generate(120, (i) => 120 + i),
+                      items: heights,
                       defaultInitial: 170,
-                      onChanged: (v) => setState(() => height = v),
+                      onChanged: (v) => notifier.update(height: v),
                       openPicker: () {
-                        _openPicker(
-                          items: List.generate(120, (i) => 120 + i),
-                          initial: height ?? 170,
+                        _openPickerGeneric(
+                          context: context,
+                          items: heights,
+                          currentValue: profile.height ?? 170,
                           unit: "cm",
-                          onSelected: (v) => setState(() => height = v),
+                          onSelected: (v) => notifier.update(height: v),
                         );
                       },
                     ),
@@ -209,24 +258,29 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                 ),
               ),
 
-              // Button Continue
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20.0),
+              // Continue Button
+              GestureDetector(
+                onTap: () => _onNextPressed(context, profile),
                 child: Container(
-                  constraints: const BoxConstraints(maxWidth: 400),
+                  constraints: BoxConstraints(maxWidth: 400),
                   width: double.infinity,
                   height: 50,
+                  margin: const EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFFFA726), Color(0xFFFF7043)],
-                    ),
+                    gradient: isComplete
+                        ? const LinearGradient(
+                            colors: [Color(0xFFFFA726), Color(0xFFFF7043)],
+                          )
+                        : null,
+                    color: isComplete ? null : Colors.white,
                     borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Colors.grey.shade300, width: 1),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
                       "Tiếp tục",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: isComplete ? Colors.white : Colors.black,
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
                       ),
@@ -355,12 +409,15 @@ class GenderSelector extends StatelessWidget {
                 _genderButton(
                   label: "Nam",
                   isActive: value == "male",
+                  isSelectedNull:
+                      value.isEmpty, // hoặc value == null nếu bạn dùng nullable
                   onTap: () => onChanged("male"),
                 ),
                 const SizedBox(width: 12),
                 _genderButton(
                   label: "Nữ",
                   isActive: value == "female",
+                  isSelectedNull: value.isEmpty,
                   onTap: () => onChanged("female"),
                 ),
               ],
@@ -375,21 +432,24 @@ class GenderSelector extends StatelessWidget {
     required String label,
     required bool isActive,
     required VoidCallback onTap,
+    bool isSelectedNull = false,
   }) {
+    final bool active = isSelectedNull ? false : isActive;
+
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
         child: Container(
           height: 48,
           decoration: BoxDecoration(
-            color: isActive ? const Color(0xFFFFA726) : Colors.white,
+            color: active ? const Color(0xFFFFA726) : Colors.white,
             borderRadius: BorderRadius.circular(15),
           ),
           child: Center(
             child: Text(
               label,
               style: TextStyle(
-                color: isActive ? Colors.white : Colors.black,
+                color: active ? Colors.white : Colors.black,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),

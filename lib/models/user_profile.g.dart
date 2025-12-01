@@ -17,9 +17,9 @@ const UserProfileSchema = CollectionSchema(
   name: r'UserProfile',
   id: 4738427352541298891,
   properties: {
-    r'age': PropertySchema(
+    r'birthYear': PropertySchema(
       id: 0,
-      name: r'age',
+      name: r'birthYear',
       type: IsarType.long,
     ),
     r'gender': PropertySchema(
@@ -27,6 +27,16 @@ const UserProfileSchema = CollectionSchema(
       name: r'gender',
       type: IsarType.byte,
       enumMap: _UserProfilegenderEnumValueMap,
+    ),
+    r'height': PropertySchema(
+      id: 2,
+      name: r'height',
+      type: IsarType.long,
+    ),
+    r'weight': PropertySchema(
+      id: 3,
+      name: r'weight',
+      type: IsarType.long,
     )
   },
   estimateSize: _userProfileEstimateSize,
@@ -58,8 +68,10 @@ void _userProfileSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.age);
+  writer.writeLong(offsets[0], object.birthYear);
   writer.writeByte(offsets[1], object.gender.index);
+  writer.writeLong(offsets[2], object.height);
+  writer.writeLong(offsets[3], object.weight);
 }
 
 UserProfile _userProfileDeserialize(
@@ -69,11 +81,13 @@ UserProfile _userProfileDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = UserProfile();
-  object.age = reader.readLongOrNull(offsets[0]);
+  object.birthYear = reader.readLongOrNull(offsets[0]);
   object.gender =
       _UserProfilegenderValueEnumMap[reader.readByteOrNull(offsets[1])] ??
           Gender.male;
+  object.height = reader.readLongOrNull(offsets[2]);
   object.id = id;
+  object.weight = reader.readLongOrNull(offsets[3]);
   return object;
 }
 
@@ -89,6 +103,10 @@ P _userProfileDeserializeProp<P>(
     case 1:
       return (_UserProfilegenderValueEnumMap[reader.readByteOrNull(offset)] ??
           Gender.male) as P;
+    case 2:
+      return (reader.readLongOrNull(offset)) as P;
+    case 3:
+      return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -97,14 +115,12 @@ P _userProfileDeserializeProp<P>(
 const _UserProfilegenderEnumValueMap = {
   'male': 0,
   'female': 1,
-  'other': 2,
-  'none': 3,
+  'none': 2,
 };
 const _UserProfilegenderValueEnumMap = {
   0: Gender.male,
   1: Gender.female,
-  2: Gender.other,
-  3: Gender.none,
+  2: Gender.none,
 };
 
 Id _userProfileGetId(UserProfile object) {
@@ -200,59 +216,64 @@ extension UserProfileQueryWhere
 
 extension UserProfileQueryFilter
     on QueryBuilder<UserProfile, UserProfile, QFilterCondition> {
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> ageIsNull() {
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+      birthYearIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'age',
+        property: r'birthYear',
       ));
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> ageIsNotNull() {
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+      birthYearIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'age',
+        property: r'birthYear',
       ));
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> ageEqualTo(
-      int? value) {
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+      birthYearEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'age',
+        property: r'birthYear',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> ageGreaterThan(
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+      birthYearGreaterThan(
     int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'age',
+        property: r'birthYear',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> ageLessThan(
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+      birthYearLessThan(
     int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'age',
+        property: r'birthYear',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> ageBetween(
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+      birthYearBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
@@ -260,7 +281,7 @@ extension UserProfileQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'age',
+        property: r'birthYear',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -323,6 +344,77 @@ extension UserProfileQueryFilter
     });
   }
 
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> heightIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'height',
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+      heightIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'height',
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> heightEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'height',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+      heightGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'height',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> heightLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'height',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> heightBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'height',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -375,6 +467,77 @@ extension UserProfileQueryFilter
       ));
     });
   }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> weightIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'weight',
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+      weightIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'weight',
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> weightEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'weight',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+      weightGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'weight',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> weightLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'weight',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> weightBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'weight',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
 }
 
 extension UserProfileQueryObject
@@ -385,15 +548,15 @@ extension UserProfileQueryLinks
 
 extension UserProfileQuerySortBy
     on QueryBuilder<UserProfile, UserProfile, QSortBy> {
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByAge() {
+  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByBirthYear() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'age', Sort.asc);
+      return query.addSortBy(r'birthYear', Sort.asc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByAgeDesc() {
+  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByBirthYearDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'age', Sort.desc);
+      return query.addSortBy(r'birthYear', Sort.desc);
     });
   }
 
@@ -408,19 +571,43 @@ extension UserProfileQuerySortBy
       return query.addSortBy(r'gender', Sort.desc);
     });
   }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByHeight() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'height', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByHeightDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'height', Sort.desc);
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByWeight() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weight', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByWeightDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weight', Sort.desc);
+    });
+  }
 }
 
 extension UserProfileQuerySortThenBy
     on QueryBuilder<UserProfile, UserProfile, QSortThenBy> {
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByAge() {
+  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByBirthYear() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'age', Sort.asc);
+      return query.addSortBy(r'birthYear', Sort.asc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByAgeDesc() {
+  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByBirthYearDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'age', Sort.desc);
+      return query.addSortBy(r'birthYear', Sort.desc);
     });
   }
 
@@ -436,6 +623,18 @@ extension UserProfileQuerySortThenBy
     });
   }
 
+  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByHeight() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'height', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByHeightDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'height', Sort.desc);
+    });
+  }
+
   QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -447,19 +646,43 @@ extension UserProfileQuerySortThenBy
       return query.addSortBy(r'id', Sort.desc);
     });
   }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByWeight() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weight', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByWeightDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weight', Sort.desc);
+    });
+  }
 }
 
 extension UserProfileQueryWhereDistinct
     on QueryBuilder<UserProfile, UserProfile, QDistinct> {
-  QueryBuilder<UserProfile, UserProfile, QDistinct> distinctByAge() {
+  QueryBuilder<UserProfile, UserProfile, QDistinct> distinctByBirthYear() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'age');
+      return query.addDistinctBy(r'birthYear');
     });
   }
 
   QueryBuilder<UserProfile, UserProfile, QDistinct> distinctByGender() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'gender');
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QDistinct> distinctByHeight() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'height');
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QDistinct> distinctByWeight() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'weight');
     });
   }
 }
@@ -472,15 +695,27 @@ extension UserProfileQueryProperty
     });
   }
 
-  QueryBuilder<UserProfile, int?, QQueryOperations> ageProperty() {
+  QueryBuilder<UserProfile, int?, QQueryOperations> birthYearProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'age');
+      return query.addPropertyName(r'birthYear');
     });
   }
 
   QueryBuilder<UserProfile, Gender, QQueryOperations> genderProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'gender');
+    });
+  }
+
+  QueryBuilder<UserProfile, int?, QQueryOperations> heightProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'height');
+    });
+  }
+
+  QueryBuilder<UserProfile, int?, QQueryOperations> weightProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'weight');
     });
   }
 }

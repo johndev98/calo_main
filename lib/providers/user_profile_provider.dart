@@ -1,35 +1,46 @@
-// user_profile_provider.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
+
 import '../models/user_profile.dart';
 import 'isar_provider.dart';
 
 class UserProfileNotifier extends Notifier<UserProfile> {
   @override
   UserProfile build() {
-    final isar = ref.watch(isarSyncProvider); // Sử dụng sync provider
+    final isar = ref.watch(isarSyncProvider);
 
     final profile = isar.userProfiles.where().findFirstSync();
+
     if (profile != null) {
       return profile;
-    } else {
-      final newProfile = UserProfile()
-        ..id = 1
-        ..gender = Gender.none
-        ..age = 18;
-      isar.writeTxnSync(() => isar.userProfiles.putSync(newProfile));
-      return newProfile;
     }
+
+    final initial = UserProfile()
+      ..id = 1
+      ..gender = Gender.none
+      ..birthYear = null
+      ..weight = null
+      ..height = null;
+
+    isar.writeTxnSync(() => isar.userProfiles.putSync(initial));
+
+    return initial;
   }
 
-  // Các method khác giữ nguyên...
-  Future<void> setGender(Gender gender) async {
-    final isar = ref.read(isarSyncProvider); // Sử dụng sync provider
+  Future<void> update({
+    Gender? gender,
+    int? birthYear,
+    int? height,
+    int? weight,
+  }) async {
+    final isar = ref.read(isarSyncProvider);
 
     final updated = UserProfile()
       ..id = state.id
-      ..gender = gender
-      ..age = state.age;
+      ..gender = gender ?? state.gender
+      ..birthYear = birthYear ?? state.birthYear
+      ..height = height ?? state.height
+      ..weight = weight ?? state.weight;
 
     await isar.writeTxn(() async {
       await isar.userProfiles.put(updated);
@@ -38,28 +49,15 @@ class UserProfileNotifier extends Notifier<UserProfile> {
     state = updated;
   }
 
-  Future<void> setAge(int age) async {
-    final isar = ref.read(isarSyncProvider); // Sử dụng sync provider
-
-    final updated = UserProfile()
-      ..id = state.id
-      ..gender = state.gender
-      ..age = age;
-
-    await isar.writeTxn(() async {
-      await isar.userProfiles.put(updated);
-    });
-
-    state = updated;
-  }
-
-  Future<void> resetProfile() async {
-    final isar = ref.read(isarSyncProvider); // Sử dụng sync provider
+  Future<void> reset() async {
+    final isar = ref.read(isarSyncProvider);
 
     final reset = UserProfile()
       ..id = 1
       ..gender = Gender.none
-      ..age = 18;
+      ..birthYear = null
+      ..weight = null
+      ..height = null;
 
     await isar.writeTxn(() async {
       await isar.userProfiles.put(reset);
@@ -69,6 +67,7 @@ class UserProfileNotifier extends Notifier<UserProfile> {
   }
 }
 
-final userProfileProvider = NotifierProvider<UserProfileNotifier, UserProfile>(
+final userProfileProvider =
+    NotifierProvider<UserProfileNotifier, UserProfile>(
   () => UserProfileNotifier(),
 );
