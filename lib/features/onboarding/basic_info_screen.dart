@@ -271,13 +271,13 @@ class SelectField extends StatelessWidget {
       child: Container(
         constraints: BoxConstraints(maxWidth: maxWidth ?? double.infinity),
         child: Column(
+          spacing: 10,
           crossAxisAlignment: CrossAxisAlignment.stretch, // label sát container
           children: [
             Text(
               label,
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 12),
             GestureDetector(
               onTap: openPicker,
               child: value == null
@@ -343,13 +343,13 @@ class GenderSelector extends StatelessWidget {
       child: Container(
         constraints: BoxConstraints(maxWidth: maxWidth ?? double.infinity),
         child: Column(
+          spacing: 10,
           crossAxisAlignment: CrossAxisAlignment.stretch, // label sát container
           children: [
             const Text(
               "Giới tính",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 12),
             Row(
               children: [
                 _genderButton(
