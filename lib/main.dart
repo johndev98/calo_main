@@ -1,3 +1,4 @@
+import 'package:calo_main/features/onboarding/basic_info_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,21 +33,14 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    // Theo dõi app lifecycle
-    if (state == AppLifecycleState.detached) {
-      print('📱 App bị detached - Database sẽ tự động đóng qua provider');
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     final isarAsync = ref.watch(isarProvider);
     final theme = ref.watch(themeProvider);
     return CupertinoApp(
+      debugShowCheckedModeBanner: false,
       theme: theme,
       home: isarAsync.when(
-        data: (isar) => const ProfilePage(),
+        data: (isar) => const BasicInfoScreen(),
         loading: () => const CupertinoPageScaffold(
           child: Center(child: CircularProgressIndicator()),
         ),
