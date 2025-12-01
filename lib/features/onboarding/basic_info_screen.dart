@@ -284,11 +284,13 @@ class BasicInfoScreen extends ConsumerWidget {
                   child: Center(
                     child: Text(
                       "Tiếp tục",
-                      style: TextStyle(
-                        color: isComplete ? Colors.white : Colors.black,
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: CupertinoTheme.of(context)
+                          .textTheme
+                          .actionTextStyle
+                          .copyWith(
+                            color: isComplete ? Colors.white : Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                   ),
                 ),
@@ -335,7 +337,10 @@ class SelectField extends StatelessWidget {
           children: [
             Text(
               label,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              style: CupertinoTheme.of(context).textTheme.textStyle.copyWith(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
             ),
             GestureDetector(
               onTap: openPicker,
@@ -405,19 +410,22 @@ class GenderSelector extends StatelessWidget {
           spacing: 10,
           crossAxisAlignment: CrossAxisAlignment.stretch, // label sát container
           children: [
-            const Text(
+            Text(
               "Giới tính",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              style: CupertinoTheme.of(context).textTheme.textStyle.copyWith(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
             ),
             Row(
               children: [
-                _genderButton(
+                GenderButton(
                   label: "Nam",
                   isActive: value == "male",
                   onTap: () => onChanged("male"),
                 ),
                 const SizedBox(width: 12),
-                _genderButton(
+                GenderButton(
                   label: "Nữ",
                   isActive: value == "female",
                   onTap: () => onChanged("female"),
@@ -429,12 +437,22 @@ class GenderSelector extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _genderButton({
-    required String label,
-    required bool isActive,
-    required VoidCallback onTap,
-  }) {
+class GenderButton extends StatelessWidget {
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const GenderButton({
+    super.key,
+    required this.label,
+    required this.isActive,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
@@ -447,11 +465,11 @@ class GenderSelector extends StatelessWidget {
           child: Center(
             child: Text(
               label,
-              style: TextStyle(
-                color: isActive ? Colors.white : Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+              style: CupertinoTheme.of(context).textTheme.actionTextStyle
+                  .copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: isActive ? Colors.white : Colors.black,
+                  ),
             ),
           ),
         ),

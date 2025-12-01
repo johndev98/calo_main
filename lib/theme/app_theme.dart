@@ -21,7 +21,7 @@ class AppTheme {
         color: CupertinoColors.black,
       ),
       // Action button / Large title
-      actionTextStyle: TextStyle(fontFamily: "Nunito", fontSize: 18),
+      actionTextStyle: TextStyle(fontFamily: "Nunito", fontSize: 20),
       // Tab / Label
       tabLabelTextStyle: TextStyle(
         fontFamily: "Open Sans",
