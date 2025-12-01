@@ -23,24 +23,52 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
     showCupertinoModalPopup(
       context: context,
       builder: (_) => Container(
-        height: 260,
-        color: CupertinoColors.systemBackground,
+        constraints: BoxConstraints(maxWidth: 400),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+          color: CupertinoColors.systemBackground,
+        ),
+        height: 300,
         child: Column(
           children: [
-            SizedBox(
-              height: 180,
+            Expanded(
               child: CupertinoPicker(
-                itemExtent: 32,
+                itemExtent: 40,
                 scrollController: FixedExtentScrollController(
                   initialItem: items.indexOf(initial),
                 ),
                 onSelectedItemChanged: (index) => onSelected(items[index]),
-                children: items.map((e) => Text("$e")).toList(),
+                children: items
+                    .map((e) => Text("$e", style: TextStyle(fontSize: 30)))
+                    .toList(),
               ),
             ),
-            CupertinoButton(
-              child: const Text("Xong"),
-              onPressed: () => Navigator.pop(context),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Container(
+                  constraints: BoxConstraints(maxWidth: 400),
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Color(0xFFFF9114),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      "xong",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
         ),

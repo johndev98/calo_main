@@ -2,13 +2,13 @@ import 'package:flutter/cupertino.dart';
 
 class AppTheme {
   // Màu primary app
-  static const primaryColor = Color(0xffff9114);
+  static const primaryColor = Color(0xFFFF9114);
 
   // LIGHT THEME
   static final light = CupertinoThemeData(
     brightness: Brightness.light,
     primaryColor: primaryColor,
-    scaffoldBackgroundColor: const Color(0xfff4f2e7),
+    scaffoldBackgroundColor: const Color(0xFFF4F2E7),
     textTheme: const CupertinoTextThemeData(
       // Body text dùng Open Sans
       textStyle: TextStyle(
@@ -37,7 +37,7 @@ class AppTheme {
   static final dark = CupertinoThemeData(
     brightness: Brightness.dark,
     primaryColor: primaryColor,
-    scaffoldBackgroundColor: const Color(0xff131313),
+    scaffoldBackgroundColor: const Color(0xFF131313),
     textTheme: const CupertinoTextThemeData(
       textStyle: TextStyle(
         fontFamily: "Open Sans",
