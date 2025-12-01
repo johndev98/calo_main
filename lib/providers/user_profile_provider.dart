@@ -41,7 +41,7 @@ class UserProfileNotifier extends Notifier<UserProfile> {
       ..birthYear = birthYear ?? state.birthYear
       ..height = height ?? state.height
       ..weight = weight ?? state.weight;
-
+      
     await isar.writeTxn(() async {
       await isar.userProfiles.put(updated);
     });

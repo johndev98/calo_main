@@ -13,7 +13,6 @@ final isarProvider = FutureProvider<Isar>((ref) async {
   // Quan trọng: Đăng ký dispose callback
   ref.onDispose(() {
     isar.close(); // ⭐ ĐÓNG DATABASE KHI PROVIDER DISPOSE
-    print('🔒 Isar database đã đóng');
   });
 
   return isar;

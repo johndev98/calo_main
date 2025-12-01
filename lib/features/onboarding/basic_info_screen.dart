@@ -1,9 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../models/user_profile.dart';
 import '../../providers/user_profile_provider.dart';
+
+final _currentYear = DateTime.now().year;
+final _birthYears = List.generate(101, (i) => _currentYear - i); // 100 năm
+final _weights = List.generate(281, (i) => 20 + i); // 20..300
+final _heights = List.generate(121, (i) => 100 + i); // 100..220
 
 class BasicInfoScreen extends ConsumerWidget {
   const BasicInfoScreen({super.key});
@@ -136,10 +140,6 @@ class BasicInfoScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(userProfileProvider);
     final notifier = ref.read(userProfileProvider.notifier);
-    final currentYear = DateTime.now().year;
-    final birthYears = List.generate(101, (i) => currentYear - i); // 100 năm
-    final weights = List.generate(281, (i) => 20 + i); // 20..300
-    final heights = List.generate(121, (i) => 100 + i); // 100..220
     // Kiểm tra tất cả giá trị
     final isComplete =
         profile.gender.name != "none" &&
@@ -202,13 +202,13 @@ class BasicInfoScreen extends ConsumerWidget {
                       maxWidth: 400,
                       label: "Năm sinh",
                       value: profile.birthYear,
-                      items: birthYears,
+                      items: _birthYears,
                       defaultInitial: 2000,
                       onChanged: (v) => notifier.update(birthYear: v),
                       openPicker: () {
                         _openPickerGeneric(
                           context: context,
-                          items: birthYears,
+                          items: _birthYears,
                           currentValue: profile.birthYear ?? 2000,
                           onSelected: (v) => notifier.update(birthYear: v),
                         );
@@ -221,13 +221,13 @@ class BasicInfoScreen extends ConsumerWidget {
                       label: "Cân nặng",
                       value: profile.weight,
                       unit: "kg",
-                      items: weights,
+                      items: _weights,
                       defaultInitial: 60,
                       onChanged: (v) => notifier.update(weight: v),
                       openPicker: () {
                         _openPickerGeneric(
                           context: context,
-                          items: weights,
+                          items: _weights,
                           currentValue: profile.weight ?? 60,
                           unit: "kg",
                           onSelected: (v) => notifier.update(weight: v),
@@ -241,13 +241,13 @@ class BasicInfoScreen extends ConsumerWidget {
                       label: "Chiều cao",
                       value: profile.height,
                       unit: "cm",
-                      items: heights,
+                      items: _heights,
                       defaultInitial: 170,
                       onChanged: (v) => notifier.update(height: v),
                       openPicker: () {
                         _openPickerGeneric(
                           context: context,
-                          items: heights,
+                          items: _heights,
                           currentValue: profile.height ?? 170,
                           unit: "cm",
                           onSelected: (v) => notifier.update(height: v),
@@ -409,15 +409,12 @@ class GenderSelector extends StatelessWidget {
                 _genderButton(
                   label: "Nam",
                   isActive: value == "male",
-                  isSelectedNull:
-                      value.isEmpty, // hoặc value == null nếu bạn dùng nullable
                   onTap: () => onChanged("male"),
                 ),
                 const SizedBox(width: 12),
                 _genderButton(
                   label: "Nữ",
                   isActive: value == "female",
-                  isSelectedNull: value.isEmpty,
                   onTap: () => onChanged("female"),
                 ),
               ],
@@ -432,24 +429,21 @@ class GenderSelector extends StatelessWidget {
     required String label,
     required bool isActive,
     required VoidCallback onTap,
-    bool isSelectedNull = false,
   }) {
-    final bool active = isSelectedNull ? false : isActive;
-
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
         child: Container(
           height: 48,
           decoration: BoxDecoration(
-            color: active ? const Color(0xFFFFA726) : Colors.white,
+            color: isActive ? const Color(0xFFFFA726) : Colors.white,
             borderRadius: BorderRadius.circular(15),
           ),
           child: Center(
             child: Text(
               label,
               style: TextStyle(
-                color: active ? Colors.white : Colors.black,
+                color: isActive ? Colors.white : Colors.black,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),

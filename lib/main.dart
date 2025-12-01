@@ -2,9 +2,7 @@ import 'package:calo_main/features/onboarding/basic_info_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'models/user_profile.dart';
 import 'providers/isar_provider.dart';
-import 'providers/user_profile_provider.dart';
 import 'theme/theme_notifier.dart';
 
 Future<void> main() async {
@@ -42,9 +40,14 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
       home: isarAsync.when(
         data: (isar) => const BasicInfoScreen(),
         loading: () => const CupertinoPageScaffold(
-          child: Center(child: CircularProgressIndicator()),
+          // Thêm const
+          child: Center(
+            child: CircularProgressIndicator(),
+          ), // Có thể thêm const nếu CircularProgressIndicator không có tham số
         ),
-        error: (err, stack) => Scaffold(body: Center(child: Text('Lỗi: $err'))),
+        error: (err, stack) => Scaffold(
+          body: Center(child: Text('Lỗi: $err')),
+        ), // Center có thể là const
       ),
     );
   }
