@@ -11,20 +11,22 @@ class BasicInfoScreen extends StatefulWidget {
 class _BasicInfoScreenState extends State<BasicInfoScreen> {
   String gender = "male";
 
-  int? birthYear; // null khi chưa chọn
+  int? birthYear;
   int? height;
   int? weight;
+
   // mở bottom sheet picker
   void _openPicker({
     required List<int> items,
     required int initial,
     required ValueChanged<int> onSelected,
+    String? unit, // thêm đơn vị
   }) {
     showCupertinoModalPopup(
       context: context,
       builder: (_) => Container(
-        constraints: BoxConstraints(maxWidth: 400),
-        decoration: BoxDecoration(
+        constraints: const BoxConstraints(maxWidth: 400),
+        decoration: const BoxDecoration(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
@@ -35,35 +37,61 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
         child: Column(
           children: [
             Expanded(
-              child: CupertinoPicker(
-                itemExtent: 40,
-                scrollController: FixedExtentScrollController(
-                  initialItem: items.indexOf(initial),
-                ),
-                onSelectedItemChanged: (index) => onSelected(items[index]),
-                children: items
-                    .map((e) => Text("$e", style: TextStyle(fontSize: 30)))
-                    .toList(),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  CupertinoPicker(
+                    itemExtent: 40,
+                    scrollController: FixedExtentScrollController(
+                      initialItem: items.indexOf(initial),
+                    ),
+                    onSelectedItemChanged: (index) => onSelected(items[index]),
+                    children: items.map((e) {
+                      return Center(
+                        child: Text("$e", style: const TextStyle(fontSize: 30)),
+                      );
+                    }).toList(),
+                  ),
+
+                  // Đơn vị đứng yên ở giữa
+                  if (unit != null)
+                    Positioned(
+                      right: 70, // chỉnh để đơn vị nằm đúng vị trí
+                      child: Text(
+                        unit,
+                        style: const TextStyle(
+                          fontSize: 26,
+                          color: CupertinoColors.black,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
+
+            // nút Xong
             Center(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: Container(
-                  constraints: BoxConstraints(maxWidth: 400),
-                  width: double.infinity,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Color(0xFFFF9114),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      "xong",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Container(
+                    constraints: const BoxConstraints(maxWidth: 400),
+                    width: double.infinity,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFF9114),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "Xong",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
@@ -88,22 +116,22 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 10),
+
               // Back + Progress
               Container(
-                constraints: BoxConstraints(maxWidth: 400),
+                constraints: const BoxConstraints(maxWidth: 400),
                 child: Row(
-                  spacing: 12,
+                  spacing: 15,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(Icons.arrow_back_ios_new, size: 18),
+                    const Icon(Icons.arrow_back_ios_new, size: 18),
                     Expanded(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5),
-                        child: LinearProgressIndicator(
+                        child: const LinearProgressIndicator(
                           value: 0.25,
                           backgroundColor: Colors.white,
-                          valueColor: const AlwaysStoppedAnimation(
-                            Color(0xFFFFA726),
-                          ),
+                          valueColor: AlwaysStoppedAnimation(Color(0xFFFFA726)),
                           minHeight: 8,
                         ),
                       ),
@@ -123,6 +151,7 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                       onChanged: (v) => setState(() => gender = v),
                     ),
 
+                    // Năm sinh
                     SelectField(
                       maxWidth: 400,
                       label: "Năm sinh",
@@ -139,6 +168,7 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                       },
                     ),
 
+                    // Cân nặng
                     SelectField(
                       maxWidth: 400,
                       label: "Cân nặng",
@@ -151,11 +181,13 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                         _openPicker(
                           items: List.generate(120, (i) => 20 + i),
                           initial: weight ?? 60,
+                          unit: "kg",
                           onSelected: (v) => setState(() => weight = v),
                         );
                       },
                     ),
 
+                    // Chiều cao
                     SelectField(
                       maxWidth: 400,
                       label: "Chiều cao",
@@ -168,6 +200,7 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                         _openPicker(
                           items: List.generate(120, (i) => 120 + i),
                           initial: height ?? 170,
+                          unit: "cm",
                           onSelected: (v) => setState(() => height = v),
                         );
                       },
@@ -175,11 +208,12 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                   ],
                 ),
               ),
+
               // Button Continue
               Padding(
                 padding: const EdgeInsets.only(bottom: 20.0),
                 child: Container(
-                  constraints: BoxConstraints(maxWidth: 400),
+                  constraints: const BoxConstraints(maxWidth: 400),
                   width: double.infinity,
                   height: 50,
                   decoration: BoxDecoration(
