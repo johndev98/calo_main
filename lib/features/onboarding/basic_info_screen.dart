@@ -55,7 +55,7 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                   height: 50,
                   decoration: BoxDecoration(
                     color: Color(0xFFFF9114),
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(15),
                   ),
                   child: const Center(
                     child: Text(
@@ -84,105 +84,109 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 10),
               // Back + Progress
-              Row(
-                children: [
-                  Icon(Icons.arrow_back_ios_new, size: 18),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: LinearProgressIndicator(
-                        value: 0.25,
-                        backgroundColor: Colors.grey.shade300,
-                        valueColor: const AlwaysStoppedAnimation(
-                          Color(0xFFFFA726),
+              Container(
+                constraints: BoxConstraints(maxWidth: 400),
+                child: Row(
+                  spacing: 12,
+                  children: [
+                    Icon(Icons.arrow_back_ios_new, size: 18),
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: LinearProgressIndicator(
+                          value: 0.25,
+                          backgroundColor: Colors.white,
+                          valueColor: const AlwaysStoppedAnimation(
+                            Color(0xFFFFA726),
+                          ),
+                          minHeight: 8,
                         ),
-                        minHeight: 8,
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
 
-              const SizedBox(height: 30),
-              // Giới tính
-              GenderSelector(
-                maxWidth: 400,
-                value: gender,
-                onChanged: (v) => setState(() => gender = v),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // Giới tính
+                    GenderSelector(
+                      maxWidth: 400,
+                      value: gender,
+                      onChanged: (v) => setState(() => gender = v),
+                    ),
+
+                    SelectField(
+                      maxWidth: 400,
+                      label: "Năm sinh",
+                      value: birthYear,
+                      items: List.generate(60, (i) => 1965 + i),
+                      defaultInitial: 1995,
+                      onChanged: (v) => setState(() => birthYear = v),
+                      openPicker: () {
+                        _openPicker(
+                          items: List.generate(60, (i) => 1965 + i),
+                          initial: birthYear ?? 1995,
+                          onSelected: (v) => setState(() => birthYear = v),
+                        );
+                      },
+                    ),
+
+                    SelectField(
+                      maxWidth: 400,
+                      label: "Cân nặng",
+                      value: weight,
+                      unit: "kg",
+                      items: List.generate(120, (i) => 20 + i),
+                      defaultInitial: 60,
+                      onChanged: (v) => setState(() => weight = v),
+                      openPicker: () {
+                        _openPicker(
+                          items: List.generate(120, (i) => 20 + i),
+                          initial: weight ?? 60,
+                          onSelected: (v) => setState(() => weight = v),
+                        );
+                      },
+                    ),
+
+                    SelectField(
+                      maxWidth: 400,
+                      label: "Chiều cao",
+                      value: height,
+                      unit: "cm",
+                      items: List.generate(120, (i) => 120 + i),
+                      defaultInitial: 170,
+                      onChanged: (v) => setState(() => height = v),
+                      openPicker: () {
+                        _openPicker(
+                          items: List.generate(120, (i) => 120 + i),
+                          initial: height ?? 170,
+                          onSelected: (v) => setState(() => height = v),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 30),
-              SelectField(
-                maxWidth: 400,
-                label: "Năm sinh",
-                value: birthYear,
-                items: List.generate(60, (i) => 1965 + i),
-                defaultInitial: 1995,
-                onChanged: (v) => setState(() => birthYear = v),
-                openPicker: () {
-                  _openPicker(
-                    items: List.generate(60, (i) => 1965 + i),
-                    initial: birthYear ?? 1995,
-                    onSelected: (v) => setState(() => birthYear = v),
-                  );
-                },
-              ),
-
-              const SizedBox(height: 30),
-
-              SelectField(
-                maxWidth: 400,
-                label: "Cân nặng",
-                value: weight,
-                unit: "kg",
-                items: List.generate(120, (i) => 20 + i),
-                defaultInitial: 60,
-                onChanged: (v) => setState(() => weight = v),
-                openPicker: () {
-                  _openPicker(
-                    items: List.generate(120, (i) => 20 + i),
-                    initial: weight ?? 60,
-                    onSelected: (v) => setState(() => weight = v),
-                  );
-                },
-              ),
-
-              const SizedBox(height: 30),
-
-              SelectField(
-                maxWidth: 400,
-                label: "Chiều cao",
-                value: height,
-                unit: "cm",
-                items: List.generate(120, (i) => 120 + i),
-                defaultInitial: 170,
-                onChanged: (v) => setState(() => height = v),
-                openPicker: () {
-                  _openPicker(
-                    items: List.generate(120, (i) => 120 + i),
-                    initial: height ?? 170,
-                    onSelected: (v) => setState(() => height = v),
-                  );
-                },
-              ),
-
-              const Spacer(),
-
               // Button Continue
-              Center(
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20.0),
                 child: Container(
                   constraints: BoxConstraints(maxWidth: 400),
                   width: double.infinity,
-                  height: 52,
+                  height: 50,
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [Color(0xFFFFA726), Color(0xFFFF7043)],
                     ),
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(15),
                   ),
                   child: const Center(
                     child: Text(
@@ -196,8 +200,6 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                   ),
                 ),
               ),
-
-              const SizedBox(height: 30),
             ],
           ),
         ),
@@ -258,7 +260,7 @@ class SelectField extends StatelessWidget {
     height: 48,
     decoration: BoxDecoration(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(15),
     ),
     child: Center(
       child: Text(
@@ -272,7 +274,7 @@ class SelectField extends StatelessWidget {
     height: 48,
     decoration: BoxDecoration(
       color: const Color(0xFFFFA726),
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(15),
     ),
     child: Center(
       child: Text(
@@ -347,7 +349,7 @@ class GenderSelector extends StatelessWidget {
           height: 48,
           decoration: BoxDecoration(
             color: isActive ? const Color(0xFFFFA726) : Colors.white,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(15),
           ),
           child: Center(
             child: Text(
