@@ -14,13 +14,11 @@ class AppTheme {
       textStyle: TextStyle(
         fontFamily: "Open Sans",
         color: CupertinoColors.black,
-        fontSize: 16,
       ),
       // Heading / Nav title dùng Nunito Sans
       navTitleTextStyle: TextStyle(
         fontFamily: "Nunito",
         color: CupertinoColors.black,
-        fontSize: 20,
       ),
       // Action button / Large title
       actionTextStyle: TextStyle(fontFamily: "Nunito", fontSize: 18),
@@ -28,7 +26,6 @@ class AppTheme {
       tabLabelTextStyle: TextStyle(
         fontFamily: "Open Sans",
         color: CupertinoColors.black,
-        fontSize: 12,
       ),
     ),
   );
@@ -42,18 +39,15 @@ class AppTheme {
       textStyle: TextStyle(
         fontFamily: "Open Sans",
         color: CupertinoColors.white,
-        fontSize: 16,
       ),
       navTitleTextStyle: TextStyle(
         fontFamily: "Nunito",
         color: CupertinoColors.white,
-        fontSize: 20,
       ),
       actionTextStyle: TextStyle(fontFamily: "Nunito", fontSize: 18),
       tabLabelTextStyle: TextStyle(
         fontFamily: "Open Sans",
         color: CupertinoColors.white,
-        fontSize: 12,
       ),
     ),
   );

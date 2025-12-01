@@ -186,6 +186,11 @@ class BasicInfoScreen extends ConsumerWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
+                    Text(
+                      "Thông tin cá nhân",
+                      style: CupertinoTheme.of(context).textTheme.textStyle
+                          .copyWith(fontSize: 26), // Áp dụng style từ theme
+                    ),
                     // Gender
                     GenderSelector(
                       maxWidth: 400,
