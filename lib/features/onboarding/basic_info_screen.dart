@@ -60,11 +60,11 @@ class BasicInfoScreen extends ConsumerWidget {
                   ),
                   if (unit != null)
                     Positioned(
-                      right: 110,
+                      right: 100,
                       child: Text(
                         unit,
                         style: TextStyle(
-                          fontSize: 26,
+                          fontSize: 28,
                           fontWeight: FontWeight.w500,
                           color: mix.colors[AppTheme.$textPrimary],
                         ),
