@@ -50,7 +50,7 @@ class AppTheme {
       textStyles: {
         $heading: const TextStyle(
           fontFamily: "Open Sans",
-          fontSize: 24,
+          fontSize: 26,
           fontWeight: FontWeight.bold,
           color: Color(0xD0000000),
         ),
@@ -73,14 +73,14 @@ class AppTheme {
         ),
         $label: const TextStyle(
           fontFamily: "Open Sans",
-          fontSize: 16,
+          fontSize: 14,
           fontWeight: FontWeight.w500,
           color: Color(0xA6000000),
         ),
       },
       spaces: {
         $spacing: 24.0,
-        $spacingSmall: 12.0,
+        $spacingSmall: 10.0,
         $spacingMedium: 20.0,
         $spacingLarge: 40.0,
       },
