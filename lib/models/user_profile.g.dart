@@ -22,19 +22,25 @@ const UserProfileSchema = CollectionSchema(
       name: r'birthYear',
       type: IsarType.long,
     ),
-    r'gender': PropertySchema(
+    r'diet': PropertySchema(
       id: 1,
+      name: r'diet',
+      type: IsarType.byte,
+      enumMap: _UserProfiledietEnumValueMap,
+    ),
+    r'gender': PropertySchema(
+      id: 2,
       name: r'gender',
       type: IsarType.byte,
       enumMap: _UserProfilegenderEnumValueMap,
     ),
     r'height': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'height',
       type: IsarType.long,
     ),
     r'weight': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'weight',
       type: IsarType.long,
     )
@@ -69,9 +75,10 @@ void _userProfileSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeLong(offsets[0], object.birthYear);
-  writer.writeByte(offsets[1], object.gender.index);
-  writer.writeLong(offsets[2], object.height);
-  writer.writeLong(offsets[3], object.weight);
+  writer.writeByte(offsets[1], object.diet.index);
+  writer.writeByte(offsets[2], object.gender.index);
+  writer.writeLong(offsets[3], object.height);
+  writer.writeLong(offsets[4], object.weight);
 }
 
 UserProfile _userProfileDeserialize(
@@ -82,12 +89,15 @@ UserProfile _userProfileDeserialize(
 ) {
   final object = UserProfile();
   object.birthYear = reader.readLongOrNull(offsets[0]);
+  object.diet =
+      _UserProfiledietValueEnumMap[reader.readByteOrNull(offsets[1])] ??
+          Diet.classic;
   object.gender =
-      _UserProfilegenderValueEnumMap[reader.readByteOrNull(offsets[1])] ??
+      _UserProfilegenderValueEnumMap[reader.readByteOrNull(offsets[2])] ??
           Gender.male;
-  object.height = reader.readLongOrNull(offsets[2]);
+  object.height = reader.readLongOrNull(offsets[3]);
   object.id = id;
-  object.weight = reader.readLongOrNull(offsets[3]);
+  object.weight = reader.readLongOrNull(offsets[4]);
   return object;
 }
 
@@ -101,17 +111,36 @@ P _userProfileDeserializeProp<P>(
     case 0:
       return (reader.readLongOrNull(offset)) as P;
     case 1:
+      return (_UserProfiledietValueEnumMap[reader.readByteOrNull(offset)] ??
+          Diet.classic) as P;
+    case 2:
       return (_UserProfilegenderValueEnumMap[reader.readByteOrNull(offset)] ??
           Gender.male) as P;
-    case 2:
-      return (reader.readLongOrNull(offset)) as P;
     case 3:
+      return (reader.readLongOrNull(offset)) as P;
+    case 4:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
 
+const _UserProfiledietEnumValueMap = {
+  'classic': 0,
+  'vegetarian': 1,
+  'vegan': 2,
+  'pescatarian': 3,
+  'keto': 4,
+  'none': 5,
+};
+const _UserProfiledietValueEnumMap = {
+  0: Diet.classic,
+  1: Diet.vegetarian,
+  2: Diet.vegan,
+  3: Diet.pescatarian,
+  4: Diet.keto,
+  5: Diet.none,
+};
 const _UserProfilegenderEnumValueMap = {
   'male': 0,
   'female': 1,
@@ -282,6 +311,59 @@ extension UserProfileQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'birthYear',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> dietEqualTo(
+      Diet value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'diet',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> dietGreaterThan(
+    Diet value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'diet',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> dietLessThan(
+    Diet value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'diet',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> dietBetween(
+    Diet lower,
+    Diet upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'diet',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -560,6 +642,18 @@ extension UserProfileQuerySortBy
     });
   }
 
+  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByDiet() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'diet', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByDietDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'diet', Sort.desc);
+    });
+  }
+
   QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByGender() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'gender', Sort.asc);
@@ -608,6 +702,18 @@ extension UserProfileQuerySortThenBy
   QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByBirthYearDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'birthYear', Sort.desc);
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByDiet() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'diet', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByDietDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'diet', Sort.desc);
     });
   }
 
@@ -668,6 +774,12 @@ extension UserProfileQueryWhereDistinct
     });
   }
 
+  QueryBuilder<UserProfile, UserProfile, QDistinct> distinctByDiet() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'diet');
+    });
+  }
+
   QueryBuilder<UserProfile, UserProfile, QDistinct> distinctByGender() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'gender');
@@ -698,6 +810,12 @@ extension UserProfileQueryProperty
   QueryBuilder<UserProfile, int?, QQueryOperations> birthYearProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'birthYear');
+    });
+  }
+
+  QueryBuilder<UserProfile, Diet, QQueryOperations> dietProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'diet');
     });
   }
 

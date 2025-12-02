@@ -6,12 +6,15 @@ class UserProfile {
   Id id = 1; // primary key
   @enumerated
   late Gender gender;
-  
+
   int? birthYear;
   int? height;
   int? weight;
+
+  @enumerated
+  late Diet diet;
 }
 
 enum Gender { male, female, none }
 
-enum Diet { classic, vegetarian, vegan, pescatarian, keto }
+enum Diet { classic, vegetarian, vegan, pescatarian, keto, none }

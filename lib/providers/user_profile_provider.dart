@@ -20,7 +20,8 @@ class UserProfileNotifier extends Notifier<UserProfile> {
       ..gender = Gender.none
       ..birthYear = null
       ..weight = null
-      ..height = null;
+      ..height = null
+      ..diet = Diet.none;
 
     isar.writeTxnSync(() => isar.userProfiles.putSync(initial));
 
@@ -32,6 +33,7 @@ class UserProfileNotifier extends Notifier<UserProfile> {
     int? birthYear,
     int? height,
     int? weight,
+    Diet? diet,
   }) async {
     final isar = ref.read(isarSyncProvider);
 
@@ -40,8 +42,9 @@ class UserProfileNotifier extends Notifier<UserProfile> {
       ..gender = gender ?? state.gender
       ..birthYear = birthYear ?? state.birthYear
       ..height = height ?? state.height
-      ..weight = weight ?? state.weight;
-      
+      ..weight = weight ?? state.weight
+      ..diet = diet ?? state.diet;
+
     await isar.writeTxn(() async {
       await isar.userProfiles.put(updated);
     });
@@ -57,7 +60,8 @@ class UserProfileNotifier extends Notifier<UserProfile> {
       ..gender = Gender.none
       ..birthYear = null
       ..weight = null
-      ..height = null;
+      ..height = null
+      ..diet = Diet.none;
 
     await isar.writeTxn(() async {
       await isar.userProfiles.put(reset);
@@ -67,7 +71,6 @@ class UserProfileNotifier extends Notifier<UserProfile> {
   }
 }
 
-final userProfileProvider =
-    NotifierProvider<UserProfileNotifier, UserProfile>(
+final userProfileProvider = NotifierProvider<UserProfileNotifier, UserProfile>(
   () => UserProfileNotifier(),
 );

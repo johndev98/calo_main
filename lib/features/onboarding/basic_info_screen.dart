@@ -11,8 +11,10 @@ final _birthYears = List.generate(101, (i) => _currentYear - i);
 final _weights = List.generate(281, (i) => 20 + i);
 final _heights = List.generate(121, (i) => 100 + i);
 
-class BasicInfoScreen extends ConsumerWidget {
-  const BasicInfoScreen({super.key});
+class BasicInfoPage extends ConsumerWidget {
+  final PageController pageController;
+
+  const BasicInfoPage({super.key, required this.pageController});
 
   void _openPickerGeneric({
     required BuildContext context,
@@ -125,12 +127,11 @@ class BasicInfoScreen extends ConsumerWidget {
         ),
       );
     } else {
-      Navigator.push(
-        context,
-        CupertinoPageRoute(
-          builder: (_) => const Scaffold(body: Center(child: Text('data'))),
-        ),
+      pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
       );
+      ;
     }
   }
 
@@ -146,175 +147,138 @@ class BasicInfoScreen extends ConsumerWidget {
         profile.weight != null &&
         profile.height != null;
 
-    return Scaffold(
-      backgroundColor: mix.colors[AppTheme.$background],
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: mix.spaces[AppTheme.$spacing] ?? 24,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(height: mix.spaces[AppTheme.$spacingSmall] ?? 10),
-
-              // Progress + Back
-              Container(
-                constraints: const BoxConstraints(maxWidth: 400),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      child: Icon(
-                        Icons.arrow_back_ios_new,
-                        size: 18,
-                        color: mix.colors[AppTheme.$textPrimary],
-                      ),
-                      onTap: () => notifier.reset(),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 15),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.all(
-                            mix.radii[AppTheme.$radiusSmall] ??
-                                const Radius.circular(8),
-                          ),
-                          child: LinearProgressIndicator(
-                            value: 0.25,
-                            backgroundColor: mix.colors[AppTheme.$surface],
-                            valueColor: AlwaysStoppedAnimation(
-                              mix.colors[AppTheme.$gradient1],
-                            ),
-                            minHeight: 8,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: mix.spaces[AppTheme.$spacing] ?? 24,
+      ),
+      child: Column(
+        children: [
+          Expanded(
+            flex: 1,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Thông tin cá nhân",
+                  style: mix.textStyles[AppTheme.$heading],
                 ),
-              ),
-
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(
-                      "Thông tin cá nhân",
-                      style: mix.textStyles[AppTheme.$heading],
-                    ),
-
-                    GenderSelector(
-                      maxWidth: 400,
-                      value: profile.gender.name,
-                      onChanged: (v) {
-                        notifier.update(
-                          gender: v == "male" ? Gender.male : Gender.female,
-                        );
-                      },
-                    ),
-
-                    SelectField(
-                      textAction: "Chọn năm sinh",
-                      maxWidth: 400,
-                      label: "Năm sinh",
-                      value: profile.birthYear,
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 6,
+            child: Column(
+              spacing: 10,
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GenderSelector(
+                  maxWidth: 400,
+                  value: profile.gender.name,
+                  onChanged: (v) {
+                    notifier.update(
+                      gender: v == "male" ? Gender.male : Gender.female,
+                    );
+                  },
+                ),
+                SelectField(
+                  textAction: "Chọn năm sinh",
+                  maxWidth: 400,
+                  label: "Năm sinh",
+                  value: profile.birthYear,
+                  items: _birthYears,
+                  defaultInitial: 2000,
+                  onChanged: (v) => notifier.update(birthYear: v),
+                  openPicker: () {
+                    _openPickerGeneric(
+                      context: context,
                       items: _birthYears,
-                      defaultInitial: 2000,
-                      onChanged: (v) => notifier.update(birthYear: v),
-                      openPicker: () {
-                        _openPickerGeneric(
-                          context: context,
-                          items: _birthYears,
-                          currentValue: profile.birthYear ?? 2000,
-                          onSelected: (v) => notifier.update(birthYear: v),
-                        );
-                      },
-                    ),
-
-                    SelectField(
-                      textAction: "Chọn cân nặng",
-                      maxWidth: 400,
-                      label: "Cân nặng",
-                      value: profile.weight,
-                      unit: "kg",
+                      currentValue: profile.birthYear ?? 2000,
+                      onSelected: (v) => notifier.update(birthYear: v),
+                    );
+                  },
+                ),
+                SelectField(
+                  textAction: "Chọn cân nặng",
+                  maxWidth: 400,
+                  label: "Cân nặng",
+                  value: profile.weight,
+                  unit: "kg",
+                  items: _weights,
+                  defaultInitial: 60,
+                  onChanged: (v) => notifier.update(weight: v),
+                  openPicker: () {
+                    _openPickerGeneric(
+                      context: context,
                       items: _weights,
-                      defaultInitial: 60,
-                      onChanged: (v) => notifier.update(weight: v),
-                      openPicker: () {
-                        _openPickerGeneric(
-                          context: context,
-                          items: _weights,
-                          currentValue: profile.weight ?? 60,
-                          unit: "kg",
-                          onSelected: (v) => notifier.update(weight: v),
-                        );
-                      },
-                    ),
-
-                    SelectField(
-                      textAction: "Chọn chiều cao",
-                      maxWidth: 400,
-                      label: "Chiều cao",
-                      value: profile.height,
-                      unit: "cm",
+                      currentValue: profile.weight ?? 60,
+                      unit: "kg",
+                      onSelected: (v) => notifier.update(weight: v),
+                    );
+                  },
+                ),
+                SelectField(
+                  textAction: "Chọn chiều cao",
+                  maxWidth: 400,
+                  label: "Chiều cao",
+                  value: profile.height,
+                  unit: "cm",
+                  items: _heights,
+                  defaultInitial: 170,
+                  onChanged: (v) => notifier.update(height: v),
+                  openPicker: () {
+                    _openPickerGeneric(
+                      context: context,
                       items: _heights,
-                      defaultInitial: 170,
-                      onChanged: (v) => notifier.update(height: v),
-                      openPicker: () {
-                        _openPickerGeneric(
-                          context: context,
-                          items: _heights,
-                          currentValue: profile.height ?? 170,
-                          unit: "cm",
-                          onSelected: (v) => notifier.update(height: v),
-                        );
-                      },
-                    ),
-                  ],
+                      currentValue: profile.height ?? 170,
+                      unit: "cm",
+                      onSelected: (v) => notifier.update(height: v),
+                    );
+                  },
                 ),
-              ),
-
-              // Continue Button
-              GestureDetector(
-                onTap: () => _onNextPressed(context, profile),
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    vertical: mix.spaces[AppTheme.$spacingSmall]!,
-                  ),
-                  constraints: const BoxConstraints(maxWidth: 400),
-                  width: double.infinity,
-                  margin: const EdgeInsets.only(bottom: 20),
-                  decoration: BoxDecoration(
-                    gradient: isComplete
-                        ? LinearGradient(
-                            colors: [
-                              mix.colors[AppTheme.$gradient1]!,
-                              mix.colors[AppTheme.$gradient2]!,
-                            ],
-                          )
-                        : null,
-                    color: isComplete ? null : mix.colors[AppTheme.$surface],
-                    borderRadius: BorderRadius.all(
-                      mix.radii[AppTheme.$radiusLarge]!,
-                    ),
-                    border: Border.all(
-                      color: mix.colors[AppTheme.$border]!,
-                      width: 1,
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "Tiếp tục",
-                      style: mix.textStyles[AppTheme.$textButton]?.copyWith(
-                        color: isComplete ? Colors.white : null,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+
+          // Continue Button
+          GestureDetector(
+            onTap: () => _onNextPressed(context, profile),
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                vertical: mix.spaces[AppTheme.$spacingSmall]!,
+              ),
+              constraints: const BoxConstraints(maxWidth: 400),
+              width: double.infinity,
+              margin: const EdgeInsets.only(bottom: 20),
+              decoration: BoxDecoration(
+                gradient: isComplete
+                    ? LinearGradient(
+                        colors: [
+                          mix.colors[AppTheme.$gradient1]!,
+                          mix.colors[AppTheme.$gradient2]!,
+                        ],
+                      )
+                    : null,
+                color: isComplete ? null : mix.colors[AppTheme.$surface],
+                borderRadius: BorderRadius.all(
+                  mix.radii[AppTheme.$radiusLarge]!,
+                ),
+                border: Border.all(
+                  color: mix.colors[AppTheme.$border]!,
+                  width: 1,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  "Tiếp tục",
+                  style: mix.textStyles[AppTheme.$textButton]?.copyWith(
+                    color: isComplete ? Colors.white : null,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -466,7 +430,9 @@ class GenderButton extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          height: 48,
+          padding: EdgeInsets.symmetric(
+            vertical: mix.spaces[AppTheme.$spacingSmall]!,
+          ),
           decoration: BoxDecoration(
             color: isActive
                 ? mix.colors[AppTheme.$primary]

@@ -80,7 +80,7 @@ class AppTheme {
       },
       spaces: {
         $spacing: 24.0,
-        $spacingSmall: 10.0,
+        $spacingSmall: 12.0,
         $spacingMedium: 20.0,
         $spacingLarge: 40.0,
       },
