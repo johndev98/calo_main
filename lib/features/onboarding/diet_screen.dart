@@ -48,58 +48,58 @@ class DietPage extends ConsumerWidget {
         horizontal: mix.spaces[AppTheme.$spacing] ?? 24,
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            flex: 1,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Chế độ ăn của bạn",
-                  style: mix.textStyles[AppTheme.$heading],
-                ),
-                Text(
-                  "Nhấn giữ để biết thêm thông tin",
-                  style: mix.textStyles[AppTheme.$label]?.copyWith(
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          Expanded(
-            flex: 4,
             child: Center(
               child: Column(
-                spacing: 20,
-                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _DietOption(
-                    title: '🍽️ Bình thường',
-                    isSelected: profile.diet == Diet.classic,
-                    onTap: () => notifier.update(diet: Diet.classic),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "Chế độ ăn của bạn",
+                        style: mix.textStyles[AppTheme.$heading],
+                      ),
+                      Text(
+                        "Nhấn giữ để biết thêm thông tin",
+                        style: mix.textStyles[AppTheme.$label]?.copyWith(
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
-                  _DietOption(
-                    title: '🥕 Chay',
-                    isSelected: profile.diet == Diet.vegetarian,
-                    onTap: () => notifier.update(diet: Diet.vegetarian),
-                  ),
-                  _DietOption(
-                    title: '🌱 Thuần chay',
-                    isSelected: profile.diet == Diet.vegan,
-                    onTap: () => notifier.update(diet: Diet.vegan),
-                  ),
-                  _DietOption(
-                    title: '🐟 🥦 Ăn cá & thực vật',
-                    isSelected: profile.diet == Diet.pescatarian,
-                    onTap: () => notifier.update(diet: Diet.pescatarian),
-                  ),
-                  _DietOption(
-                    title: '🥑 Keto',
-                    isSelected: profile.diet == Diet.keto,
-                    onTap: () => notifier.update(diet: Diet.keto),
+
+                  Column(
+                    spacing: 10,
+                    children: [
+                      _DietOption(
+                        title: '🍽️ Bình thường',
+                        isSelected: profile.diet == Diet.classic,
+                        onTap: () => notifier.update(diet: Diet.classic),
+                      ),
+                      _DietOption(
+                        title: '🥕 Chay',
+                        isSelected: profile.diet == Diet.vegetarian,
+                        onTap: () => notifier.update(diet: Diet.vegetarian),
+                      ),
+                      _DietOption(
+                        title: '🌱 Thuần chay',
+                        isSelected: profile.diet == Diet.vegan,
+                        onTap: () => notifier.update(diet: Diet.vegan),
+                      ),
+                      _DietOption(
+                        title: '🐟 🥦 Ăn cá & thực vật',
+                        isSelected: profile.diet == Diet.pescatarian,
+                        onTap: () => notifier.update(diet: Diet.pescatarian),
+                      ),
+                      _DietOption(
+                        title: '🥑 Keto',
+                        isSelected: profile.diet == Diet.keto,
+                        onTap: () => notifier.update(diet: Diet.keto),
+                      ),
+                    ],
                   ),
                 ],
               ),

@@ -154,87 +154,83 @@ class BasicInfoPage extends ConsumerWidget {
       child: Column(
         children: [
           Expanded(
-            flex: 1,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   "Thông tin cá nhân",
                   style: mix.textStyles[AppTheme.$heading],
                 ),
-              ],
-            ),
-          ),
-          Expanded(
-            flex: 6,
-            child: Column(
-              spacing: 10,
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                GenderSelector(
-                  maxWidth: 400,
-                  value: profile.gender.name,
-                  onChanged: (v) {
-                    notifier.update(
-                      gender: v == "male" ? Gender.male : Gender.female,
-                    );
-                  },
-                ),
-                SelectField(
-                  textAction: "Chọn năm sinh",
-                  maxWidth: 400,
-                  label: "Năm sinh",
-                  value: profile.birthYear,
-                  items: _birthYears,
-                  defaultInitial: 2000,
-                  onChanged: (v) => notifier.update(birthYear: v),
-                  openPicker: () {
-                    _openPickerGeneric(
-                      context: context,
+
+                Column(
+                  spacing: 10,
+                  children: [
+                    GenderSelector(
+                      maxWidth: 400,
+                      value: profile.gender.name,
+                      onChanged: (v) {
+                        notifier.update(
+                          gender: v == "male" ? Gender.male : Gender.female,
+                        );
+                      },
+                    ),
+                    SelectField(
+                      textAction: "Chọn năm sinh",
+                      maxWidth: 400,
+                      label: "Năm sinh",
+                      value: profile.birthYear,
                       items: _birthYears,
-                      currentValue: profile.birthYear ?? 2000,
-                      onSelected: (v) => notifier.update(birthYear: v),
-                    );
-                  },
-                ),
-                SelectField(
-                  textAction: "Chọn cân nặng",
-                  maxWidth: 400,
-                  label: "Cân nặng",
-                  value: profile.weight,
-                  unit: "kg",
-                  items: _weights,
-                  defaultInitial: 60,
-                  onChanged: (v) => notifier.update(weight: v),
-                  openPicker: () {
-                    _openPickerGeneric(
-                      context: context,
-                      items: _weights,
-                      currentValue: profile.weight ?? 60,
+                      defaultInitial: 2000,
+                      onChanged: (v) => notifier.update(birthYear: v),
+                      openPicker: () {
+                        _openPickerGeneric(
+                          context: context,
+                          items: _birthYears,
+                          currentValue: profile.birthYear ?? 2000,
+                          onSelected: (v) => notifier.update(birthYear: v),
+                        );
+                      },
+                    ),
+                    SelectField(
+                      textAction: "Chọn cân nặng",
+                      maxWidth: 400,
+                      label: "Cân nặng",
+                      value: profile.weight,
                       unit: "kg",
-                      onSelected: (v) => notifier.update(weight: v),
-                    );
-                  },
-                ),
-                SelectField(
-                  textAction: "Chọn chiều cao",
-                  maxWidth: 400,
-                  label: "Chiều cao",
-                  value: profile.height,
-                  unit: "cm",
-                  items: _heights,
-                  defaultInitial: 170,
-                  onChanged: (v) => notifier.update(height: v),
-                  openPicker: () {
-                    _openPickerGeneric(
-                      context: context,
-                      items: _heights,
-                      currentValue: profile.height ?? 170,
+                      items: _weights,
+                      defaultInitial: 60,
+                      onChanged: (v) => notifier.update(weight: v),
+                      openPicker: () {
+                        _openPickerGeneric(
+                          context: context,
+                          items: _weights,
+                          currentValue: profile.weight ?? 60,
+                          unit: "kg",
+                          onSelected: (v) => notifier.update(weight: v),
+                        );
+                      },
+                    ),
+                    SelectField(
+                      textAction: "Chọn chiều cao",
+                      maxWidth: 400,
+                      label: "Chiều cao",
+                      value: profile.height,
                       unit: "cm",
-                      onSelected: (v) => notifier.update(height: v),
-                    );
-                  },
+                      items: _heights,
+                      defaultInitial: 170,
+                      onChanged: (v) => notifier.update(height: v),
+                      openPicker: () {
+                        _openPickerGeneric(
+                          context: context,
+                          items: _heights,
+                          currentValue: profile.height ?? 170,
+                          unit: "cm",
+                          onSelected: (v) => notifier.update(height: v),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
