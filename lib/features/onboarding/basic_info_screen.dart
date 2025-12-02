@@ -27,8 +27,7 @@ class BasicInfoScreen extends ConsumerWidget {
     showCupertinoModalPopup(
       context: context,
       builder: (_) => Container(
-        constraints: const BoxConstraints(maxWidth: 400),
-        height: 300,
+        constraints: const BoxConstraints(maxWidth: 400, maxHeight: 300),
         decoration: BoxDecoration(
           color: mix.colors[AppTheme.$surface],
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -61,7 +60,7 @@ class BasicInfoScreen extends ConsumerWidget {
                   ),
                   if (unit != null)
                     Positioned(
-                      right: 70,
+                      right: 110,
                       child: Text(
                         unit,
                         style: TextStyle(
@@ -89,7 +88,7 @@ class BasicInfoScreen extends ConsumerWidget {
                 ),
                 child: Center(
                   child: Text(
-                    "Xong",
+                    "Chọn",
                     style: mix.textStyles[AppTheme.$textButton]?.copyWith(
                       color: Colors.white,
                     ),
@@ -279,9 +278,11 @@ class BasicInfoScreen extends ConsumerWidget {
               GestureDetector(
                 onTap: () => _onNextPressed(context, profile),
                 child: Container(
+                  padding: EdgeInsets.symmetric(
+                    vertical: mix.spaces[AppTheme.$spacingSmall]!,
+                  ),
                   constraints: const BoxConstraints(maxWidth: 400),
                   width: double.infinity,
-                  height: 50,
                   margin: const EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(
                     gradient: isComplete
@@ -346,7 +347,6 @@ class SelectField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mix = MixTheme.of(context);
-
     return Center(
       child: Container(
         constraints: BoxConstraints(maxWidth: maxWidth ?? double.infinity),
@@ -368,7 +368,9 @@ class SelectField extends StatelessWidget {
   }
 
   Widget _selectBox(MixThemeData mix, String text) => Container(
-    height: 48,
+    padding: EdgeInsets.symmetric(
+      vertical: mix.spaces[AppTheme.$spacingSmall]!,
+    ),
     decoration: BoxDecoration(
       color: mix.colors[AppTheme.$surface],
       borderRadius: BorderRadius.all(mix.radii[AppTheme.$radiusLarge]!),
@@ -379,7 +381,9 @@ class SelectField extends StatelessWidget {
   );
 
   Widget _valueBox(MixThemeData mix, String text) => Container(
-    height: 48,
+    padding: EdgeInsets.symmetric(
+      vertical: mix.spaces[AppTheme.$spacingSmall]!,
+    ),
     decoration: BoxDecoration(
       color: mix.colors[AppTheme.$primary],
       borderRadius: BorderRadius.all(mix.radii[AppTheme.$radiusLarge]!),
