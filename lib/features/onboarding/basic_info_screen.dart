@@ -1,13 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mix/mix.dart';
 import '../../models/user_profile.dart';
 import '../../providers/user_profile_provider.dart';
+import '../../theme/app_theme.dart';
 
 final _currentYear = DateTime.now().year;
-final _birthYears = List.generate(101, (i) => _currentYear - i); // 100 năm
-final _weights = List.generate(281, (i) => 20 + i); // 20..300
-final _heights = List.generate(121, (i) => 100 + i); // 100..220
+final _birthYears = List.generate(101, (i) => _currentYear - i);
+final _weights = List.generate(281, (i) => 20 + i);
+final _heights = List.generate(121, (i) => 100 + i);
 
 class BasicInfoScreen extends ConsumerWidget {
   const BasicInfoScreen({super.key});
@@ -19,17 +21,17 @@ class BasicInfoScreen extends ConsumerWidget {
     required ValueChanged<int> onSelected,
     String? unit,
   }) {
-    // nếu currentValue null thì lấy giá trị mặc định là items đầu tiên
+    final mix = MixTheme.of(context);
     int selectedValue = currentValue ?? items.first;
 
     showCupertinoModalPopup(
       context: context,
       builder: (_) => Container(
-        constraints: BoxConstraints(maxWidth: 400),
+        constraints: const BoxConstraints(maxWidth: 400),
         height: 300,
-        decoration: const BoxDecoration(
-          color: CupertinoColors.systemBackground,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        decoration: BoxDecoration(
+          color: mix.colors[AppTheme.$surface],
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
           children: [
@@ -48,7 +50,10 @@ class BasicInfoScreen extends ConsumerWidget {
                           (e) => Center(
                             child: Text(
                               "$e",
-                              style: const TextStyle(fontSize: 30),
+                              style: TextStyle(
+                                fontSize: 30,
+                                color: mix.colors[AppTheme.$textPrimary],
+                              ),
                             ),
                           ),
                         )
@@ -59,9 +64,10 @@ class BasicInfoScreen extends ConsumerWidget {
                       right: 70,
                       child: Text(
                         unit,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.w500,
+                          color: mix.colors[AppTheme.$textPrimary],
                         ),
                       ),
                     ),
@@ -70,7 +76,7 @@ class BasicInfoScreen extends ConsumerWidget {
             ),
             GestureDetector(
               onTap: () {
-                onSelected(selectedValue); // luôn chọn giá trị hiện tại
+                onSelected(selectedValue);
                 Navigator.pop(context);
               },
               child: Container(
@@ -78,16 +84,14 @@ class BasicInfoScreen extends ConsumerWidget {
                 height: 50,
                 margin: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFF9114),
+                  color: mix.colors[AppTheme.$primary],
                   borderRadius: BorderRadius.circular(15),
                 ),
-                child: const Center(
+                child: Center(
                   child: Text(
                     "Xong",
-                    style: TextStyle(
+                    style: mix.textStyles[AppTheme.$textButton]?.copyWith(
                       color: Colors.white,
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -100,7 +104,6 @@ class BasicInfoScreen extends ConsumerWidget {
   }
 
   void _onNextPressed(BuildContext context, UserProfile profile) {
-    // Danh sách các trường chưa chọn
     List<String> missing = [];
 
     if (profile.gender.name == "none") missing.add("giới tính");
@@ -109,7 +112,6 @@ class BasicInfoScreen extends ConsumerWidget {
     if (profile.height == null) missing.add("chiều cao");
 
     if (missing.isNotEmpty) {
-      // Hiển thị dialog với các mục chưa chọn
       showCupertinoDialog(
         context: context,
         builder: (_) => CupertinoAlertDialog(
@@ -124,13 +126,10 @@ class BasicInfoScreen extends ConsumerWidget {
         ),
       );
     } else {
-      // Tất cả đã chọn -> chuyển sang màn hình tiếp theo
       Navigator.push(
         context,
         CupertinoPageRoute(
-          builder: (_) => const Scaffold(
-            body: Center(child: Text('data')),
-          ), // Thay bằng màn hình tiếp theo của bạn
+          builder: (_) => const Scaffold(body: Center(child: Text('data'))),
         ),
       );
     }
@@ -140,41 +139,55 @@ class BasicInfoScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(userProfileProvider);
     final notifier = ref.read(userProfileProvider.notifier);
-    // Kiểm tra tất cả giá trị
+    final mix = MixTheme.of(context);
+
     final isComplete =
         profile.gender.name != "none" &&
         profile.birthYear != null &&
         profile.weight != null &&
         profile.height != null;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F4E9),
+      backgroundColor: mix.colors[AppTheme.$background],
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: EdgeInsets.symmetric(
+            horizontal: mix.spaces[AppTheme.$spacing] ?? 24,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const SizedBox(height: 10),
+              SizedBox(height: mix.spaces[AppTheme.$spacingSmall] ?? 10),
 
               // Progress + Back
               Container(
-                constraints: BoxConstraints(maxWidth: 400),
+                constraints: const BoxConstraints(maxWidth: 400),
                 child: Row(
                   children: [
                     GestureDetector(
-                      child: Icon(Icons.arrow_back_ios_new, size: 18),
-                      onTap: () {
-                        notifier.reset();
-                      },
+                      child: Icon(
+                        Icons.arrow_back_ios_new,
+                        size: 18,
+                        color: mix.colors[AppTheme.$textPrimary],
+                      ),
+                      onTap: () => notifier.reset(),
                     ),
                     Expanded(
                       child: Padding(
-                        padding: EdgeInsets.only(left: 15),
-                        child: LinearProgressIndicator(
-                          value: 0.25,
-                          backgroundColor: Colors.white,
-                          valueColor: AlwaysStoppedAnimation(Color(0xFFFFA726)),
-                          minHeight: 8,
+                        padding: const EdgeInsets.only(left: 15),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.all(
+                            mix.radii[AppTheme.$radiusSmall] ??
+                                const Radius.circular(8),
+                          ),
+                          child: LinearProgressIndicator(
+                            value: 0.25,
+                            backgroundColor: mix.colors[AppTheme.$surface],
+                            valueColor: AlwaysStoppedAnimation(
+                              mix.colors[AppTheme.$gradient1],
+                            ),
+                            minHeight: 8,
+                          ),
                         ),
                       ),
                     ),
@@ -188,10 +201,9 @@ class BasicInfoScreen extends ConsumerWidget {
                   children: [
                     Text(
                       "Thông tin cá nhân",
-                      style: CupertinoTheme.of(context).textTheme.textStyle
-                          .copyWith(fontSize: 26), // Áp dụng style từ theme
+                      style: mix.textStyles[AppTheme.$heading],
                     ),
-                    // Gender
+
                     GenderSelector(
                       maxWidth: 400,
                       value: profile.gender.name,
@@ -202,8 +214,8 @@ class BasicInfoScreen extends ConsumerWidget {
                       },
                     ),
 
-                    // Năm sinh
                     SelectField(
+                      textAction: "Chọn năm sinh",
                       maxWidth: 400,
                       label: "Năm sinh",
                       value: profile.birthYear,
@@ -220,8 +232,8 @@ class BasicInfoScreen extends ConsumerWidget {
                       },
                     ),
 
-                    // Cân nặng
                     SelectField(
+                      textAction: "Chọn cân nặng",
                       maxWidth: 400,
                       label: "Cân nặng",
                       value: profile.weight,
@@ -240,8 +252,8 @@ class BasicInfoScreen extends ConsumerWidget {
                       },
                     ),
 
-                    // Chiều cao
                     SelectField(
+                      textAction: "Chọn chiều cao",
                       maxWidth: 400,
                       label: "Chiều cao",
                       value: profile.height,
@@ -267,30 +279,34 @@ class BasicInfoScreen extends ConsumerWidget {
               GestureDetector(
                 onTap: () => _onNextPressed(context, profile),
                 child: Container(
-                  constraints: BoxConstraints(maxWidth: 400),
+                  constraints: const BoxConstraints(maxWidth: 400),
                   width: double.infinity,
                   height: 50,
                   margin: const EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(
                     gradient: isComplete
-                        ? const LinearGradient(
-                            colors: [Color(0xFFFFA726), Color(0xFFFF7043)],
+                        ? LinearGradient(
+                            colors: [
+                              mix.colors[AppTheme.$gradient1]!,
+                              mix.colors[AppTheme.$gradient2]!,
+                            ],
                           )
                         : null,
-                    color: isComplete ? null : Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: Colors.grey.shade300, width: 1),
+                    color: isComplete ? null : mix.colors[AppTheme.$surface],
+                    borderRadius: BorderRadius.all(
+                      mix.radii[AppTheme.$radiusLarge]!,
+                    ),
+                    border: Border.all(
+                      color: mix.colors[AppTheme.$border]!,
+                      width: 1,
+                    ),
                   ),
                   child: Center(
                     child: Text(
                       "Tiếp tục",
-                      style: CupertinoTheme.of(context)
-                          .textTheme
-                          .actionTextStyle
-                          .copyWith(
-                            color: isComplete ? Colors.white : Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style: mix.textStyles[AppTheme.$textButton]?.copyWith(
+                        color: isComplete ? Colors.white : null,
+                      ),
                     ),
                   ),
                 ),
@@ -312,6 +328,7 @@ class SelectField extends StatelessWidget {
   final ValueChanged<int> onChanged;
   final VoidCallback openPicker;
   final double? maxWidth;
+  final String? textAction;
 
   const SelectField({
     super.key,
@@ -323,30 +340,26 @@ class SelectField extends StatelessWidget {
     required this.onChanged,
     required this.openPicker,
     this.maxWidth,
+    this.textAction,
   });
 
   @override
   Widget build(BuildContext context) {
+    final mix = MixTheme.of(context);
+
     return Center(
-      // căn giữa toàn bộ container
       child: Container(
         constraints: BoxConstraints(maxWidth: maxWidth ?? double.infinity),
         child: Column(
-          spacing: 10,
-          crossAxisAlignment: CrossAxisAlignment.stretch, // label sát container
+          spacing: mix.spaces[AppTheme.$spacingSmall] ?? 10,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              label,
-              style: CupertinoTheme.of(context).textTheme.textStyle.copyWith(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            Text(label, style: mix.textStyles[AppTheme.$label]),
             GestureDetector(
               onTap: openPicker,
               child: value == null
-                  ? _selectBox("Chọn $label")
-                  : _valueBox("$value${unit != null ? " $unit" : ""}"),
+                  ? _selectBox(mix, "$textAction")
+                  : _valueBox(mix, "$value${unit != null ? " $unit" : ""}"),
             ),
           ],
         ),
@@ -354,40 +367,34 @@ class SelectField extends StatelessWidget {
     );
   }
 
-  Widget _selectBox(String text) => Container(
+  Widget _selectBox(MixThemeData mix, String text) => Container(
     height: 48,
     decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(15),
+      color: mix.colors[AppTheme.$surface],
+      borderRadius: BorderRadius.all(mix.radii[AppTheme.$radiusLarge]!),
     ),
     child: Center(
-      child: Text(
-        text,
-        style: TextStyle(color: Colors.grey.shade600, fontSize: 15),
-      ),
+      child: Text(text, style: mix.textStyles[AppTheme.$actionText]),
     ),
   );
 
-  Widget _valueBox(String text) => Container(
+  Widget _valueBox(MixThemeData mix, String text) => Container(
     height: 48,
     decoration: BoxDecoration(
-      color: const Color(0xFFFFA726),
-      borderRadius: BorderRadius.circular(15),
+      color: mix.colors[AppTheme.$primary],
+      borderRadius: BorderRadius.all(mix.radii[AppTheme.$radiusLarge]!),
     ),
     child: Center(
       child: Text(
         text,
-        style: const TextStyle(
+        style: mix.textStyles[AppTheme.$actionText]?.copyWith(
           color: Colors.white,
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
+          fontFamily: "Open Sans",
         ),
       ),
     ),
   );
 }
-
-//
 
 class GenderSelector extends StatelessWidget {
   final String value;
@@ -403,20 +410,16 @@ class GenderSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mix = MixTheme.of(context);
+
     return Center(
       child: Container(
         constraints: BoxConstraints(maxWidth: maxWidth ?? double.infinity),
         child: Column(
-          spacing: 10,
-          crossAxisAlignment: CrossAxisAlignment.stretch, // label sát container
+          spacing: mix.spaces[AppTheme.$spacingSmall] ?? 10,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              "Giới tính",
-              style: CupertinoTheme.of(context).textTheme.textStyle.copyWith(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            Text("Giới tính", style: mix.textStyles[AppTheme.$label]),
             Row(
               children: [
                 GenderButton(
@@ -453,23 +456,25 @@ class GenderButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mix = MixTheme.of(context);
+
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
         child: Container(
           height: 48,
           decoration: BoxDecoration(
-            color: isActive ? const Color(0xFFFFA726) : Colors.white,
-            borderRadius: BorderRadius.circular(15),
+            color: isActive
+                ? mix.colors[AppTheme.$primary]
+                : mix.colors[AppTheme.$surface],
+            borderRadius: BorderRadius.all(mix.radii[AppTheme.$radiusLarge]!),
           ),
           child: Center(
             child: Text(
               label,
-              style: CupertinoTheme.of(context).textTheme.actionTextStyle
-                  .copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: isActive ? Colors.white : Colors.black,
-                  ),
+              style: mix.textStyles[AppTheme.$actionText]?.copyWith(
+                color: isActive ? Colors.white : null,
+              ),
             ),
           ),
         ),

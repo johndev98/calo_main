@@ -17,6 +17,7 @@ dependencies:
   flutter_unit_ruler: ^1.0.1
   http: ^1.6.0
   shared_preferences: ^2.5.3
+  mix: ^1.7.0
 
 dev_dependencies:
   flutter_test:
